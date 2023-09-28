@@ -7,12 +7,41 @@ import {
   TouchableOpacity,
 } from 'react-native';
 // import { deviceHeight, deviceWidth } from "../screens/Dimensions"
-import React from 'react';
+import React, { useState , useEffect} from 'react';
 import Carousel from './Carousel';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 export default function Home() {
   const navigation = useNavigation();
+
+  const [userEmail, setUserEmail] = useState('');
+
+ 
+
+  useEffect(() => {
+
+    AsyncStorage.getItem('userEmail')
+
+      .then((email) => {
+
+        if (email) {
+
+          console.log('Retrieved user email:', email);
+
+          setUserEmail(email);
+
+        }
+
+      })
+
+      .catch((error) => {
+
+        console.log(error);
+
+      });
+
+  }, []);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#f2fff8'}}>
@@ -24,7 +53,7 @@ export default function Home() {
             marginBottom: 10,
             padding: 20,
           }}>
-          <Text style={{fontSize: 16}}> Hello User</Text>
+          <Text style={{fontSize: 16}}> {userEmail}</Text>
           <ImageBackground
             source={require('../assets/profile_img.jpg')}
             style={{width: 35, height: 35}}

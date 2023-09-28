@@ -12,13 +12,19 @@ import Meals from './src/screens/Meals';
 import Form from './src/screens/Form';
 import DetailsScreen from './src/Workout/DetailsScreen';
 import GuideScreen from './src/Workout/GuideScreen';
+import Splash from './src/screens/Splash';
 // import Mealbutton from './src/screens/Mealbutton';
 const Stack = createStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Banner">
+      <Stack.Navigator initialRouteName="Splash">
         
+      <Stack.Screen
+          name="Splash"
+          component={Splash}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Login"
           component={Login}

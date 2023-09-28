@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert ,ImageBackground} from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ImageBackground,
+} from 'react-native';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const Register = () => {
   const navigation = useNavigation();
@@ -13,8 +20,9 @@ const Register = () => {
   });
 
   const handleSubmit = () => {
-    axios.post('http://192.168.20.210:3000/registration', values)
-      .then((res) => {
+    axios
+      .post('http://192.168.1.103:3000/registration', values)
+      .then(res => {
         if (res.data.status === 'Success') {
           Alert.alert('Success', res.data.message);
           navigation.navigate('Login');
@@ -23,48 +31,49 @@ const Register = () => {
           Alert.alert('Error', res.data.message);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   };
 
   return (
     <View style={styles.container}>
-    <ImageBackground
-  source={require('../assets/wallpaper.jpg')}
-  style={styles.container}
-  >
-      <View style={styles.formContainer}>
-        <Text style={styles.header}>Register</Text>
-        <TextInput
-          value={values.name}
-          onChangeText={(text) => setValues({ ...values, name: text })}
-          placeholder="Full Name"
-          style={styles.input}
-        />
-        <TextInput
-          value={values.email}
-          onChangeText={(text) => setValues({ ...values, email: text })}
-          placeholder="youremail@gmail.com"
-          style={styles.input}
-        />
-        <TextInput
-          value={values.password}
-          onChangeText={(text) => setValues({ ...values, password: text })}
-          placeholder="********"
-          style={styles.input}
-          secureTextEntry
-        />
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Register</Text>
-        </TouchableOpacity>
-        <Text style={styles.loginText}>
-          Already have an account?{' '}
-          <Text style={styles.linkText} onPress={() => navigation.navigate('Login')}>
-            Login here.
+      <ImageBackground
+        source={require('../assets/wallpaper.jpg')}
+        style={styles.container}>
+        <View style={styles.formContainer}>
+          <Text style={styles.header}>Register</Text>
+          <TextInput
+            value={values.name}
+            onChangeText={text => setValues({...values, name: text})}
+            placeholder="Full Name"
+            style={styles.input}
+          />
+          <TextInput
+            value={values.email}
+            onChangeText={text => setValues({...values, email: text})}
+            placeholder="youremail@gmail.com"
+            style={styles.input}
+          />
+          <TextInput
+            value={values.password}
+            onChangeText={text => setValues({...values, password: text})}
+            placeholder="********"
+            style={styles.input}
+            secureTextEntry
+          />
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Register</Text>
+          </TouchableOpacity>
+          <Text style={styles.loginText}>
+            Already have an account?{' '}
+            <Text
+              style={styles.linkText}
+              onPress={() => navigation.navigate('Login')}>
+              Login here.
+            </Text>
           </Text>
-        </Text>
-      </View>
+        </View>
       </ImageBackground>
     </View>
   );
@@ -73,7 +82,7 @@ const Register = () => {
 const styles = {
   container: {
     flex: 1,
-    width:"100%",
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -83,20 +92,20 @@ const styles = {
     width: '80%',
     borderRadius: 0.4,
     background: 'none',
-    borderWidth:2,
-    borderColor:"#edffd7",
-    opacity:0.6,
-    borderTopLeftRadius: 70, 
+    borderWidth: 2,
+    borderColor: '#edffd7',
+    opacity: 0.6,
+    borderTopLeftRadius: 70,
     borderBottomRightRadius: 70,
-    shadowColor: "#000",
-shadowOffset: {
-	width: 0,
-	height: 7,
-},
-shadowOpacity: 0.41,
-shadowRadius: 9.11,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 7,
+    },
+    shadowOpacity: 0.41,
+    shadowRadius: 9.11,
 
-elevation: 24,
+    elevation: 24,
   },
   header: {
     fontSize: 24,
@@ -108,10 +117,9 @@ elevation: 24,
   input: {
     marginVertical: 10,
     padding: 10,
-    fontSize:18,
+    fontSize: 18,
     borderRadius: 8,
     backgroundColor: '#cbe0de',
-    
   },
   button: {
     backgroundColor: 'transparent',
@@ -128,7 +136,7 @@ elevation: 24,
   },
   loginText: {
     marginTop: 20,
-    fontSize:14,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#d6ffa3',
     textAlign: 'center',

@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert,ImageBackground } from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ImageBackground,
+} from 'react-native';
 // import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 // import { faGoogle, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -13,15 +21,19 @@ const Login = () => {
   });
 
   const handleSubmit = () => {
-    axios.post('http://192.168.20.210:3000/login', values)
-      .then((res) => {
+    axios
+      .post('http://192.168.1.103:3000/login', values)
+      .then(res => {
         if (res.data.status === 'Success') {
+          Alert.alert('Success', res.data.message);
+          AsyncStorage.setItem('userEmail', values.email);
+          console.log('User email stored:', values.email);
           navigation.navigate('Home'); // Change 'Home' to your app's main screen
         } else {
           Alert.alert('Error', res.data.message);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       });
   };
@@ -36,39 +48,37 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
-    <ImageBackground
-  source={require('../assets/wallpaper.jpg')}
-  style={styles.container}
-  >
-  
-      <View style={styles.formContainer}>
-        <Text style={styles.header}>LOGIN</Text>
-        <TextInput
-          value={values.email}
-          onChangeText={(text) => setValues({ ...values, email: text })}
-          placeholder="youremail@gmail.com"
-          style={styles.input}
-        />
-        <TextInput
-          value={values.password}
-          onChangeText={(text) => setValues({ ...values, password: text })}
-          placeholder="********"
-          style={styles.input}
-          secureTextEntry
-        />
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText} >Log In</Text>
-        </TouchableOpacity>
-        <View style={styles.socialButtonsContainer}>
-         
-        </View>
-        <Text style={styles.registerText}>
-          Don't have an account?{' '}
-          <Text style={styles.linkText} onPress={() => navigation.navigate('Register')}>
-            Register here.
+      <ImageBackground
+        source={require('../assets/wallpaper.jpg')}
+        style={styles.container}>
+        <View style={styles.formContainer}>
+          <Text style={styles.header}>LOGIN</Text>
+          <TextInput
+            value={values.email}
+            onChangeText={text => setValues({...values, email: text})}
+            placeholder="youremail@gmail.com"
+            style={styles.input}
+          />
+          <TextInput
+            value={values.password}
+            onChangeText={text => setValues({...values, password: text})}
+            placeholder="********"
+            style={styles.input}
+            secureTextEntry
+          />
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Log In</Text>
+          </TouchableOpacity>
+          <View style={styles.socialButtonsContainer}></View>
+          <Text style={styles.registerText}>
+            Don't have an account?{' '}
+            <Text
+              style={styles.linkText}
+              onPress={() => navigation.navigate('Register')}>
+              Register here.
+            </Text>
           </Text>
-        </Text>
-      </View>
+        </View>
       </ImageBackground>
     </View>
   );
@@ -80,27 +90,27 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
-    width:"100%"
+    width: '100%',
   },
   formContainer: {
     padding: 25,
     width: '80%',
     borderRadius: 0.4,
     background: 'none',
-    borderWidth:2,
-    borderColor:"#edffd7",
-    opacity:0.7,
-    borderTopLeftRadius: 70, 
+    borderWidth: 2,
+    borderColor: '#edffd7',
+    opacity: 0.7,
+    borderTopLeftRadius: 70,
     borderBottomRightRadius: 70,
-    shadowColor: "#000",
-shadowOffset: {
-	width: 0,
-	height: 7,
-},
-shadowOpacity: 0.41,
-shadowRadius: 9.11,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 7,
+    },
+    shadowOpacity: 0.41,
+    shadowRadius: 9.11,
 
-elevation: 24,
+    elevation: 24,
   },
   header: {
     fontSize: 24,
@@ -112,10 +122,9 @@ elevation: 24,
   input: {
     marginVertical: 10,
     padding: 10,
-    fontSize:18,
+    fontSize: 18,
     borderRadius: 8,
     backgroundColor: '#cbe0de',
-    
   },
   button: {
     backgroundColor: 'transparent',
@@ -151,7 +160,7 @@ elevation: 24,
   },
   registerText: {
     marginTop: 20,
-    fontSize:14,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#d6ffa3',
     textAlign: 'center',

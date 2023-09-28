@@ -1,3 +1,6 @@
+const Meal = require("../models/mealModel")
+
+
 module.exports = (sequelize, DataTypes, Model) => {
   const User = sequelize.define('User', {
     name: {
@@ -22,7 +25,11 @@ module.exports = (sequelize, DataTypes, Model) => {
     // timestamps: false
   });
 
+
+
+  
+
   // `sequelize.define` also returns the model
   return User;
-  // console.log(User === sequelize.models.User); // true
+  console.log(User === sequelize.models.User); // true
 };

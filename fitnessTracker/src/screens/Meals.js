@@ -1,196 +1,206 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput,ScrollView } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import React, {useState} from 'react';
+import axios from 'axios';
+
+import {
+  Text,
+  View,
+  KeyboardAvoidingView,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ImageBackground,
+  StyleSheet,
+} from 'react-native';
+
+import Meal from './Meal';
+import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const Meals = () => {
-  const [mealPlans, setMealPlans] = useState([
-    { id: 1, meal: 'Breakfast', timing: '8 AM', dietPlan: 'Bread, Fruits, Eggs' },
-    // ... other meal plans
-  ]);
-  const [newDietPlan, setNewDietPlan] = useState('');
+  const navigation = useNavigation();
+  const [task, setTask] = useState('');
 
-  const addDietPlan = (planId) => {
-    const updatedMealPlans = [...mealPlans];
-    updatedMealPlans[planId - 1].dietPlan = updatedMealPlans[planId - 1].dietPlan + ' , ' + newDietPlan;
-    setMealPlans(updatedMealPlans);
-    setNewDietPlan('');
+  const [taskItems, setTaskItems] = useState([]);
+
+  const [editedIndex, setEditedIndex] = useState(-1);
+
+  const [categoryIndex, setCategoryIndex] = React.useState(0);
+
+  const categories = ['BREAKFAST', 'LUNCH', 'DINNER']; //categories fields to navigate
+
+  const CategoryList = () => {
+    return (
+      <View style={styles.categoryContainer}>
+        {categories.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            activeOpacity={0.8}
+            onPress={() => setCategoryIndex(index)}>
+            <Text
+              style={[
+                styles.categoryText,
+
+                categoryIndex === index && styles.categoryTextSelected,
+              ]}>
+              {item}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
   };
 
-  const deleteDietPlan = (planId) => {
-    const updatedMealPlans = [...mealPlans];
-    updatedMealPlans[planId - 1].dietPlan = ''; // Clearing the diet plan
-    setMealPlans(updatedMealPlans);
+  //this function add meal in meals table on clicking on add
+  const handleAddTask = () => {
+    axios
+      .post('http://192.168.1.103:3000/meals', {addMeal: task})
+
+      .then(res => {
+        if (res.data.status === 'Success') {
+          setTaskItems([task, ...taskItems]);
+          setTask('');
+          Alert.alert('Success', res.data.message);
+          navigation.navigate('Meals');
+          console.log(res.data.message);
+        } else {
+          Alert.alert('Error', res.data.message);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
- 
+
+  const completeTask = index => {
+    const mealPlanId = taskItems[index];
+    axios
+      .delete(`http://192.168.1.103:3000/meals/${mealPlanId.id}`)
+      .then(res => {
+        if (res.data.status === 'Success') {
+          const updatedTaskItems = taskItems.filter((item, i) => i !== index);
+          setTaskItems(updatedTaskItems);
+          Alert.alert('Success', res.data.message);
+        } else {
+          Alert.alert('Error', res.data.message);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  const handleEditTask = index => {
+    setEditedIndex(index); // Set the edited task index
+  };
+
+  const handleSaveEdit = (editedText, index) => {
+    const updatedTasks = [...taskItems];
+    updatedTasks[index] = editedText;
+    setTaskItems(updatedTasks);
+    setEditedIndex(-1); // Reset the edited task index
+    Alert.alert('Task Edited', 'The task has been edited successfully.');
+  };
+
   return (
-    
-    <View style={styles.container}>
-      <Text style={styles.heading}>Meal Plans for a Week</Text>
-      {/* Render Meal Plans */}
-      <ScrollView>
-      {mealPlans.map(plan => (
-        <LinearGradient key={plan.id} colors={['#d2ece1', '#316851']} style={styles.mealContainer} >
-          <Text style={styles.mealHeader}>{plan.meal}</Text>
-          <Text style={styles.mealHeader}>Meal Timing: {plan.timing}</Text>
-          <Text style={styles.mealItems}>Diet plan: {plan.dietPlan}</Text>
-          <TextInput
-            style={styles.inputField}
-            placeholder="Enter new diet plan"
-            value={newDietPlan}
-            onChangeText={text => setNewDietPlan(text)}
-          />
+    <View style={{backgroundColor: '#f2fff8', flex: 1}}>
+      <ImageBackground
+        source={require('../../assets/wallpaper.jpg')}
+        style={{height: 800, opacity: 0.6}}>
+        <KeyboardAvoidingView>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              padding: 10,
+              marginLeft: 90,
+              color: '#0c5480',
+            }}>
+            Meal to Add
+          </Text>
 
-          <View style={styles.actionButtons}>
-            <TouchableOpacity onPress={() => addDietPlan(plan.id)}>
-              <Image
-                source={require('../../assets/add-button.png')}
-                style={styles.actionIcon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Image
-                source={require('../../assets/edit.png')}
-                style={styles.actionIcon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => deleteDietPlan(plan.id)}>
-              <Image
-                source={require('../../assets/trash.png')}
-                style={styles.actionIcon}
-              />
+          <CategoryList />
+
+          <View
+            style={{
+              flexDirection: 'row', // Set flexDirection to 'row'
+              alignItems: 'center',
+              paddingHorizontal: 10,
+              borderWidth: 1,
+              borderColor: 'rgba(227, 237, 255, 1) 53%',
+              borderRadius: 10,
+              width: '95%',
+              marginBottom: 20,
+              marginTop: 10,
+              width: 355,
+              backgroundColor: 'white',
+              shadowColor: '#ffffff',
+              shadowOffset: {width: 10, height: 6},
+              shadowOpacity: 0.39,
+              marginLeft: 15,
+              shadowRadius: 8.46,
+              elevation: 14,
+            }}>
+            <TextInput
+              style={{fontSize: 20, flex: 1}} // Added flex: 1 to allow the TextInput to take space
+              placeholder={'Enter your Breakfast'}
+              value={task}
+              onChangeText={text => setTask(text)}
+            />
+
+            <TouchableOpacity onPress={() => handleAddTask()}>
+              <View>
+                <Text
+                  style={{fontSize: 35, fontWeight: 'bold', paddingLeft: 10}}>
+                  +
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
-         
-        </LinearGradient>
-        
-      ))}
-      <LinearGradient colors={['#d2ece1', '#316851']} style={styles.mealContainer}>
-        <Text style={styles.mealHeader}>Lunch</Text>
-        <Text style={styles.mealHeader}>Meal Timing: 1 PM</Text>
-        <Text style={styles.mealItems}>Diet plan: Grilled Chicken, Salad</Text>
-        <TextInput
-        style={{borderWidth: 2,
-        borderColor: '#d2ece1',
-        padding: 8,
-        borderRadius:10,
+        </KeyboardAvoidingView>
 
-        marginBottom: 10,
-        marginTop:15}}
-        placeholder="Enter new diet plan"
-        value={newDietPlan}
-        onChangeText={text => setNewDietPlan(text)}
-      />
-        <View style={styles.actionButtons}>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/add-button.png')}
-              style={styles.actionIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/edit.png')}
-              style={styles.actionIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/trash.png')}
-              style={styles.actionIcon}
-            />
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
-
-      {/* Dinner */}
-      <LinearGradient colors={['#d2ece1', '#316851']} style={styles.mealContainer}>
-        <Text style={styles.mealHeader}>Dinner</Text>
-        <Text style={styles.mealHeader}>Meal Timing: 7 PM</Text>
-        <Text style={styles.mealItems}>Diet plan: Salmon, Veggies, Rice</Text>
-        <TextInput
-        style={{borderWidth: 2,
-        borderColor: '#d2ece1',
-        padding: 8,
-        borderRadius:10,
-
-        marginBottom: 10,
-        marginTop:15}}
-        placeholder="Enter new diet plan"
-        value={newDietPlan}
-        onChangeText={text => setNewDietPlan(text)}
-      />
-        <View style={styles.actionButtons}>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/add-button.png')}
-              style={styles.actionIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/edit.png')}
-              style={styles.actionIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/trash.png')}
-              style={styles.actionIcon}
-            />
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
-      </ScrollView>
-    </View>    
-
+        <ScrollView>
+          <View>
+            {taskItems.map((item, index) => (
+              <Meal
+                key={index}
+                text={item}
+                onDelete={() => completeTask(index)}
+                onEdit={() => handleEditTask(index)} // Pass the index to the edit function
+                isEditing={editedIndex === index} // Pass whether the task is being edited
+                onSave={editedText => handleSaveEdit(editedText, index)}
+              />
+            ))}
+          </View>
+        </ScrollView>
+      </ImageBackground>
+    </View>
   );
 };
 
+export default Meals;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f2fff8',
-    padding: 20,
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  inputField: {
-    borderWidth: 2,
-    borderColor: '#d2ece1',
-    borderRadius:10,
-    padding: 8,
-    marginBottom: 10,
-    marginTop:15
-  },
-  mealContainer: {
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-  },
-  mealHeader: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color:'#ffffff'
-  },
-  mealItems: {
-    fontSize: 17,
-    color: 'white',
-  },
-  actionButtons: {
+  categoryContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 10,
+    marginTop: 30,
+    marginBottom: 20,
+    justifyContent: 'space-between',
+    marginLeft: 15,
+    marginRight: 15,
+    backgroundColor: '#fff',
   },
-  actionIcon: {
-    borderRadius: 1,
-    overflow: 'hidden',
-    height: 30,
-    width: 30,
-    marginRight: 10,
+
+  categoryText: {
+    fontSize: 16,
+    color: 'grey',
+    fontWeight: 'bold',
+  },
+
+  categoryTextSelected: {
+    color: '#00B761',
+    paddingBottom: 5,
+    borderBottomWidth: 2,
+    borderColor: '#00B761',
   },
 });
-
-export default Meals;

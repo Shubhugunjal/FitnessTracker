@@ -12,21 +12,21 @@ export default function Carousel() {
     //auto scroll
     useEffect(() => {
         let interval = setInterval(() => {
-            if (activeIndex === Data.length - 1) {
-                flatlistRef.current.scrollToIndex({
-                    index: 0,
-                    animation: true,
-                })
-            } else {
-                flatlistRef.current.scrollToIndex({
-                    index: activeIndex + 1,
-                    animation: true
-
-                })
-            }
-        },2000)
-        return ()=> clearInterval(interval);
-    })
+          if (Data.length === 0) {
+            // No need to scroll if there's no data
+            return;
+          }
+      
+          const nextIndex = (activeIndex + 1) % Data.length;
+          flatlistRef.current.scrollToIndex({
+            index: nextIndex,
+            animated: true,
+          });
+        }, 2000);
+      
+        return () => clearInterval(interval);
+      }, [activeIndex]);
+      
    const getItemLayout = (data, index)=>({
     length: screenWidth,
     offset:screenWidth * index,

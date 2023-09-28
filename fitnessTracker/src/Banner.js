@@ -1,20 +1,19 @@
 import React from 'react';
-import { View, ImageBackground, Text, TouchableOpacity } from 'react-native';
+import {View, ImageBackground, Text, TouchableOpacity} from 'react-native';
 
-const Banner = ({ navigation }) => {
+const Banner = ({navigation}) => {
   return (
     <View style={styles.container}>
       <ImageBackground
         source={require('../assets/banner.jpg')}
-        style={styles.imageBackground}
-      >
+        style={styles.imageBackground}>
         <Text style={styles.text}>
-          Staying fit to keep you in good condition can now be achieved through mobile apps
+          Staying fit to keep you in good condition can now be achieved through
+          mobile apps
         </Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Login')}
-        >
+          onPress={() => navigation.navigate('Login')}>
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
       </ImageBackground>
@@ -40,31 +39,29 @@ const styles = {
     fontSize: 20,
     textAlign: 'center',
     color: '#ffffff',
-    marginTop:520,
+    marginTop: 520,
     fontWeight: 'bold',
-
   },
-//   text1: {
-//     fontSize: 28,
-//     textAlign: 'center',
-//     margin: 10,
-//     color: '#c5ff7d',
-//     marginTop:450,
-//     fontWeight: 'bold',
+  //   text1: {
+  //     fontSize: 28,
+  //     textAlign: 'center',
+  //     margin: 10,
+  //     color: '#c5ff7d',
+  //     marginTop:450,
+  //     fontWeight: 'bold',
 
-//   },
+  //   },
   button: {
     backgroundColor: '#bbff66',
     padding: 12,
     borderRadius: 10,
     marginTop: 35,
-    width:320
+    width: 320,
   },
   buttonText: {
     color: '#000000',
     fontSize: 20,
     textAlign: 'center',
-    
   },
 };
 
